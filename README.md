@@ -12,7 +12,7 @@ A computer vision based fishing automation tool for **Pixel Worlds**, built with
 - Tracks fish position (dark/red fish via HSV masking, green fish via edge-template matching)
 - Keeps the fish centered inside the minigame box using `A`/`D` key holds
 - Gates the `W` key press on **net visibility + fish position** (fish must be within the error margin)
-- **Auto-recovery**: detects disconnects, re-enters the world, and presses `C` to teleport the character back to the fishing spot (requires a **Big Metal Fan** and **Vortex Portal** placed at the spawn point to push the character into position)
+- **Auto-recovery**: detects disconnects, re-enters the world, and presses `C` to select the first inventory slot (bait), ready to cast again (requires a **Big Metal Fan** and **Vortex Portal** placed at the spawn point to push the character back into the fishing position)
 - **Steam relaunch**: if the world screen cannot be found 3 times in a row, kills and relaunches the game via Steam
 - Startup **lure limit prompt** — automatically closes the game and puts the PC to sleep when the limit is reached
 - Saves a **stats report** (lures used, fish caught, runtime) on every exit
