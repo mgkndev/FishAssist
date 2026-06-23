@@ -1,0 +1,73 @@
+{
+  "_comment": "FishBot V5 Configuration File - Edit values here, no need to touch the main script.",
+  "world_name": "YOUR WORLD",
+  "recovery": {
+    "no_strike_timeout_seconds": 60,
+    "enter_world_click": {
+      "x": 956,
+      "y": 529
+    },
+    "world_confirm_click": {
+      "x": 848,
+      "y": 658
+    },
+    "empty_area_click": {
+      "x": 1556,
+      "y": 508
+    }
+  },
+  "roi": {
+    "strike": {
+      "top": 319,
+      "left": 850,
+      "width": 302,
+      "height": 139
+    },
+    "box": {
+      "top": 265,
+      "left": 643,
+      "width": 620,
+      "height": 18
+    },
+    "fish": {
+      "top": 285,
+      "left": 647,
+      "width": 621,
+      "height": 30
+    },
+    "land": {
+      "top": 211,
+      "left": 675,
+      "width": 562,
+      "height": 56
+    },
+    "net": {
+      "top": 332,
+      "left": 1172,
+      "width": 50,
+      "height": 40
+    },
+    "take": {
+      "top": 713,
+      "left": 841,
+      "width": 231,
+      "height": 75
+    },
+    "world": {
+      "top": 806,
+      "left": 832,
+      "width": 249,
+      "height": 105
+    }
+  },
+  "error_margin": {
+    "normal_fish": 10,
+    "green_fish": 21
+  },
+  "_forerrormargin": "These values represent the bot’s tolerance range—in other words, how far the fish is allowed to move away from the center of the box. For strong lines, you can lower this value; however, if you lower it too much, even the slightest movement of the fish will trigger a reaction, increasing the vibration.",
+  "offsets": {
+    "box_center": 16,
+    "fish_center": 0
+  },
+  "_foroffsets": "If the bot cannot properly center the box, the issue may be with either box detection or fish detection. Determine which one is causing the offset before making adjustments. If your green_fish.png template was cropped perfectly, the issue is usually with the box center rather than the fish center. A positive value (default: 16, works perfectly for me but better find your best) makes the bot treat the box center as slightly further to the right, while a negative value makes it treat the box center as slightly further to the left. To verify whether the box center is misaligned, test using a Superior Rod and observe the fish's position inside the box while the bot is tracking it. If the fish consistently hugs the left or right side of the box instead of staying near the center, the box center is likely offset and should be adjusted."
+}
