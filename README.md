@@ -1,99 +1,147 @@
 # FishAssist
 
-FishAssist is an automated fishing tool designed for high efficiency and reliability. Unlike many macro tools that rely on fixed-time clicking, this project utilizes real-time image recognition to monitor the game state.
+A computer vision based fishing automation tool for **Pixel Worlds**, built with Python and OpenCV.
 
-## Why FishAssist?
+> All tunable parameters live in `config.json` — no need to touch the main script.
 
-FishAssist is built on the philosophy of transparency and safety. It differs from standard market solutions in three key ways:
+---
 
-* **Non-Invasive Architecture:** FishAssist does not touch the game's memory, inject DLLs, or modify game files. Because it interacts purely with visual output, it is classified as an external automation tool rather than a game hack.
-* **Full Transparency:** The project is 100% open source. You can inspect every line of code to verify its security. There are no hidden backdoors—just readable, trusted Python code.
-* **Anti-Cheat Resilience:** Unlike standard "fixed-interval" macros, FishAssist mimics human reaction times and input patterns. This natural, unpredictable behavior significantly reduces the risk of detection by anti-cheat systems.
+## Features
 
-## What does FishAssist do?
+- Detects the **strike** indicator and reacts automatically
+- Tracks fish position (dark/red fish via HSV masking, green fish via edge-template matching)
+- Keeps the fish centered inside the minigame box using `A`/`D` key holds
+- Gates the `W` key press on **net visibility + fish position** (fish must be within the error margin)
+- **Auto-recovery**: detects disconnects, re-enters the world, and presses `C` to teleport the character back to the fishing spot (requires a **Big Metal Fan** and **Vortex Portal** placed at the spawn point to push the character into position)
+- **Steam relaunch**: if the world screen cannot be found 3 times in a row, kills and relaunches the game via Steam
+- Startup **lure limit prompt** — automatically closes the game and puts the PC to sleep when the limit is reached
+- Saves a **stats report** (lures used, fish caught, runtime) on every exit
 
-FishAssist automates the entire fishing process in Pixel Worlds using advanced Computer Vision (OpenCV) techniques.
+---
 
-* **Intelligent Vision:** Instead of relying on unreliable static timers, the script "sees" the game screen in real-time. It processes visual feedback to determine exactly when to react to game events.
-* **Full Automation:** From casting the line to reeling in the catch, the script manages the entire fishing loop uninterrupted.
-* **Tireless Performance:** The only difference between FishAssist and a human player is that the bot does not need to sleep, eat, or rest. It provides consistent, high-efficiency fishing 24/7.
+## Requirements
 
-## Setup Guide
+- Python 3.9+
+- Windows (uses `powershell` for sleep and `os.startfile` for Steam launch)
 
-To ensure consistent performance, the bot requires a standardized environment.
+Install dependencies:
 
-### 1. Environment Standardization
-* **Visual Consistency:** Keep your zoom level, game position, and screen resolution fixed.
-* **Disconnect Protection:** For the automated disconnect protection to function, your character must reach the fishing spot within 5–10 seconds of spawning in your world. Use fan/portal configurations to ensure your character is positioned correctly immediately upon world entry.
+```bash
+pip install opencv-python numpy pyautogui mss pynput
+```
 
-### 2. Assets & Screenshots
-The bot relies on template matching. You must capture screenshots of your own game screen to create your assets.
-* **Quality:** Assets must be captured in full-screen mode and cropped precisely to match the sample files provided.
-* **Transparency:** Ensure your `fish_green` file is saved with a transparent background. Without transparency, the detection algorithm will fail.
+---
 
-### 3. ROI Configuration
-"ROI" stands for **Region of Interest**. These are the specific coordinates the bot monitors. Use the `selector.py` script to identify and save these coordinates to your `main.py` configuration.
+## File Structure
 
-#### ROI Selection Guide
-| ROI Name | Description |
-| :--- | :--- |
-| `roi_strike` | The area containing the "Strike" text. Keep it tight to avoid color conflicts; a dark background is recommended. |
-| `roi_kutu` | The thin box area shown in the reference image. |
-| `roi_balik` | The main fishing area. **Critical:** Select this area carefully. |
-| `roi_land` | The landing zone for the catch. |
-| `roi_net` | The net capture zone. Define this area as concisely as possible. |
-| `roi_take` | The interaction/collect area. |
-| `roi_world` | The navigation area. Capture this widely (ignore arrows for now). |
+```
+FishAssist/
+├── v5.py
+├── config.json
+├── strike.png
+├── take.png
+├── stolen.png
+├── net.png
+├── fish_lost.png
+├── world.png
+└── fish_green.png
+```
 
-### ROI Reference Images
+All `.png` template files must be placed in the **same folder** as `v5.py`.
 
-**roi_kutu**
-![Kutu](2.png)
+---
 
-**roi_balik**
-![Balik](7.png)
+## Template Images
 
-**roi_land**
-![Land](4.png)
+Crop these from your own game screen using a tool like ShareX or Snipping Tool:
 
-**roi_net**
-![Net](1.png)
+| File | What to capture |
+|---|---|
+| `strike.png` | The "STRIKE!" text that appears when a fish bites |
+| `take.png` | The "TAKE" button shown after the minigame ends |
+| `stolen.png` | The indicator shown when a lure gets stolen |
+| `net.png` | The net icon that appears during the minigame |
+| `fish_lost.png` | The indicator shown when the fish escapes |
+| `world.png` | A portion of the world-select screen (used to detect disconnects) |
+| `fish_green.png` | The green fish sprite — crop tightly, right-facing only (the bot mirrors it for left) |
 
-**roi_take**
-![Take](3.png)
+---
 
-**roi_world**
-![World](5.png)
+## Configuration (`config.json`)
 
-*Warning: Ensure all your assets are **smaller** than the designated ROI area. If an asset is larger than its assigned ROI, the code will fail to detect it.*
+```json
+{
+  "world_name": "your_world",
+  "recovery": {
+    "no_strike_timeout_seconds": 60,
+    "enter_world_click":  { "x": 956, "y": 529 },
+    "world_confirm_click": { "x": 848, "y": 658 },
+    "empty_area_click":   { "x": 1556, "y": 508 }
+  },
+  "roi": {
+    "strike": { "top": 319, "left": 850,  "width": 302, "height": 139 },
+    "box":    { "top": 265, "left": 643,  "width": 620, "height": 18  },
+    "fish":   { "top": 285, "left": 647,  "width": 621, "height": 30  },
+    "land":   { "top": 211, "left": 675,  "width": 562, "height": 56  },
+    "net":    { "top": 332, "left": 1172, "width": 50,  "height": 40  },
+    "take":   { "top": 713, "left": 841,  "width": 231, "height": 75  },
+    "world":  { "top": 806, "left": 832,  "width": 249, "height": 105 }
+  },
+  "error_margin": {
+    "normal_fish": 10,
+    "green_fish":  21
+  },
+  "offsets": {
+    "box_center":  16,
+    "fish_center": 0
+  }
+}
+```
 
-## Recovery Mode Configuration
+### Key options
 
-Recovery Mode is a fail-safe mechanism that triggers if the bot detects a disconnection or prolonged inactivity. It searches for the `world.png` asset to initiate the automated reconnection process.
+**`world_name`** — The world the bot will re-enter during recovery.
 
-### Configuration Steps
-1.  **Set World Name:** Open `main.py`, locate line 143, and replace `"YOUR WORLD"` with your actual world name.
-2.  **Update Coordinates:** Use your coordinate finder script to determine the correct values:
+**`recovery.no_strike_timeout_seconds`** — How many seconds without a strike before the bot checks for a disconnect. Default: `60`.
 
-![Recovery Screenshot 1](5.png)
-![Recovery Screenshot 2](6.png)
+**`recovery.*_click`** — Screen coordinates used during the recovery sequence. The order of operations is:
 
-* **Location #1:** Replace `guvenli_tikla(956, 529)` with the coordinates for the first recovery point.
-* **Location #2:** Replace `guvenli_tikla(848, 658)` with the coordinates for the second recovery point.
-* **Location #3:** Replace `guvenli_tikla(1041, 865)` with the coordinates for the third recovery point. **Note: Your inventory must be visible as shown in the image.**
+1. `empty_area_click` — clicks an empty area to dismiss any popup that may appear on the world screen (reward, announcement, etc.)
+2. `enter_world_click` — clicks the world name input field (clicked twice to make sure it's focused)
+3. `world_confirm_click` — confirms and enters the world after the name is typed
 
-## How to Use
+Adjust all three coordinates to match your screen layout.
 
-Once your setup is correctly configured:
-1.  **Positioning:** Move your character to your standardized fishing position.
-2.  **Execution:** Run the script.
-3.  **Bait Setup:** Select your desired bait in-game.
-4.  **Calibration:** Press the **'Y'** key to define the exact location where the bait should be cast.
+**`roi.*`** — Screen regions (in pixels) that the bot captures for each detection task. If your game window is in a different position or resolution, update these.
 
-## Troubleshooting
+**`error_margin`** — How far (in pixels) the fish is allowed to drift from the box center before the bot corrects. Lower = more reactive (may cause vibration). Higher = more relaxed. Separate values for normal and green fish.
 
-* **Color Detection Issues:** If the bot fails to track the blue fish, it is likely due to differences in color profiles or graphics settings. You may need to update the color constants within the source code to match your specific screen output.
-* **Internet Connectivity:** The Recovery Mode is designed to handle game-initiated disconnections or minor stutters. It cannot resolve a total loss of internet connectivity. Please ensure your connection is stable for continuous operation.
+**`offsets.box_center`** — Shifts the perceived center of the green box left or right. Useful if the box detection is consistently off to one side. Positive = shift right. To verify: watch the bot with a Superior Rod and see if the fish hugs one side of the box; if so, adjust this value.
 
-## License
-This project is licensed under the **GNU General Public License v3.0**.
+**`offsets.fish_center`** — Same concept for fish detection. Usually `0` if `fish_green.png` was cropped precisely.
+
+---
+
+## Usage
+
+1. Open Pixel Worlds and position your character at the fishing spot.
+2. Run the script:
+   ```bash
+   python v5.py
+   ```
+3. Enter the number of lures you want to use when prompted.
+4. Move your cursor to the **lure casting point** and press **Y**.
+5. The bot starts automatically.
+
+When the lure limit is reached, the game is closed and the PC is put to sleep.
+
+To stop early, press **Ctrl+C** — stats are saved on exit.
+
+---
+
+## Notes
+
+- Default ROI and recovery coordinates were tested on a **1920×1080** display with the game running in **1280×720 windowed** mode. All template images were also captured at this resolution. If your setup differs, update both `roi` and `recovery.*_click` values in `config.json`.
+- Your **top inventory slot** must always contain bait before starting the bot.
+- The bot uses randomized mouse movement and key timings to appear more natural.
+- `fish_green.png` only needs to be cropped from the **right-facing** direction — the bot generates the mirrored version automatically.
