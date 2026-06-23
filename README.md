@@ -59,11 +59,14 @@ Crop these from your own game screen using a tool like ShareX or Snipping Tool:
 |---|---|
 | `strike.png` | The "STRIKE!" text that appears when a fish bites |
 | `take.png` | The "TAKE" button shown after the minigame ends |
-| `stolen.png` | The indicator shown when a lure gets stolen |
 | `net.png` | The net icon that appears during the minigame |
 | `fish_lost.png` | The indicator shown when the fish escapes |
 | `world.png` | A portion of the world-select screen (used to detect disconnects) |
 | `fish_green.png` | The green fish sprite — crop tightly, right-facing only (the bot mirrors it for left) |
+
+---
+
+## ROI & Coordinates
 
 ---
 
@@ -112,7 +115,7 @@ Crop these from your own game screen using a tool like ShareX or Snipping Tool:
 
 Adjust all three coordinates to match your screen layout.
 
-**`roi.*`** — Screen regions (in pixels) that the bot captures for each detection task. If your game window is in a different position or resolution, update these.
+**`roi.*`** — Screen regions (in pixels) that the bot captures for each detection task. If your game window is in a different position or resolution, update these. Use the included **ROI Selector** and **Coordinate Finder** tools in the repository to easily find the correct values for your setup.
 
 **`error_margin`** — How far (in pixels) the fish is allowed to drift from the box center before the bot corrects. Lower = more reactive (may cause vibration). Higher = more relaxed. Separate values for normal and green fish.
 
@@ -141,7 +144,7 @@ To stop early, press **Ctrl+C** — stats are saved on exit.
 
 ## Notes
 
-- Default ROI and recovery coordinates were tested on a **1920×1080** display with the game running in **1280×720 windowed** mode. All template images were also captured at this resolution. If your setup differs, update both `roi` and `recovery.*_click` values in `config.json`.
+- Default ROI and recovery coordinates were tested on a **1920×1080** display with the game running in **1280×720 windowed** mode. All template images were also captured at this resolution. The default values assume **one zoom level out from the closest** in-game zoom. If your setup differs, update both `roi` and `recovery.*_click` values in `config.json`.
 - Your **top inventory slot** must always contain bait before starting the bot.
 - The bot uses randomized mouse movement and key timings to appear more natural.
 - `fish_green.png` only needs to be cropped from the **right-facing** direction — the bot generates the mirrored version automatically.
