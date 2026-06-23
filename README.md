@@ -64,6 +64,10 @@ Crop these from your own game screen using a tool like ShareX or Snipping Tool:
 | `world.png` | A portion of the world-select screen (used to detect disconnects) |
 | `fish_green.png` | The green fish sprite — crop tightly, right-facing only (the bot mirrors it for left) |
 
+> **⚠️ Capturing your own assets:** You **must** capture all template images from your own screen at the exact resolution and zoom level you will use while running the bot. Take a full screenshot, then crop each template precisely using Paint or a background removal tool. Your game resolution, zoom level, and character position must remain **fixed and consistent** — any change will break detection. You can refer to the example assets in the repository as a starting point, but do not use them directly unless your setup is identical.
+>
+> **`fish_green.png` requires extra care.** The crop must be tight and clean with no extra pixels around the fish. Even a few pixels off will cause the edge-matching algorithm to fail or produce incorrect results. If the bot struggles to track green fish, recapture this asset first.
+
 ---
 
 ## ROI & Coordinates
