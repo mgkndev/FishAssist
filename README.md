@@ -179,6 +179,7 @@ To stop early, press **Ctrl+C** — stats are saved on exit.
 ## Notes
 
 - Default ROI and recovery coordinates were tested on a **1920×1080** display with the game running in **1280×720 windowed** mode. All template images were also captured at this resolution. The default values assume **one zoom level out from the closest** in-game zoom. If your setup differs, update both `roi` and `recovery.*_click` values in `config.json`.
+- If the bot fails to track dark/navy fish, your monitor color profile or GPU color settings may be affecting HSV detection. Try disabling any color enhancement settings in your GPU control panel (NVIDIA/AMD) and make sure no contrast or saturation adjustments are applied to the game window.
 - Your **top inventory slot** must always contain bait before starting the bot.
 - The bot uses randomized mouse movement and key timings to appear more natural.
 - `fish_green.png` only needs to be cropped from the **right-facing** direction — the bot generates the mirrored version automatically.
